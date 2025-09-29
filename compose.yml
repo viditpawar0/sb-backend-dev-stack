@@ -9,7 +9,7 @@ services:
         - dbdata:/var/lib/postgresql/data
         - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
         ports:
-          - $DB_PORT:5432
+          - ${DB_PORT:-5433}:5432
 
     localstack:
         image: localstack/localstack:latest
@@ -34,7 +34,7 @@ services:
             - SPRING_PROFILES_ACTIVE=dev
             - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://sb-service-registry:8761/eureka/
         ports:
-          - $API_GATEWAY_PORT:8080
+          - ${API_GATEWAY_PORT:-8080}:8080
 
     topic-trainer:
         image: viditpawar/study-buddy-topic-trainer:latest
@@ -74,4 +74,4 @@ volumes:
 
 models:
     llm:
-        model: ai/gemma3
+        model: ${LLM_MODEL:-ai/gemma3}
