@@ -6,3 +6,6 @@ docker compose up
 ~~~
 
 Check the `.env` file for customizable configs and their defaults.
+Change the defaults like this:
+
+`docker compose up -e CONFIG1=VAL1 -e CONFIG2=VAL2`
