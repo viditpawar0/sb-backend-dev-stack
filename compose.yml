@@ -1,0 +1,77 @@
+services:
+    db:
+        image: postgres:17
+        container_name: sb-db
+        environment:
+            POSTGRES_USER: spring
+            POSTGRES_PASSWORD: boot
+        volumes:
+        - dbdata:/var/lib/postgresql/data
+        - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
+        ports:
+          - $DB_PORT:5432
+
+    localstack:
+        image: localstack/localstack:latest
+        container_name: sb-localstack
+        environment:
+            SERVICES: s3
+        volumes:
+            - ./init-localstack.sh:/etc/localstack/init/ready.d/10-init-localstack.sh
+    
+    service-registry:
+        image: viditpawar/study-buddy-service-registry:latest
+        container_name: sb-service-registry
+        environment:
+            - SPRING_PROFILES_ACTIVE=dev
+    
+    api-gateway:
+        image: viditpawar/study-buddy-api-gateway:latest
+        container_name: sb-api-gateway
+        depends_on:
+            - service-registry
+        environment:
+            - SPRING_PROFILES_ACTIVE=dev
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://sb-service-registry:8761/eureka/
+        expose:
+          - 8080
+
+    topic-trainer:
+        image: viditpawar/study-buddy-topic-trainer:latest
+        container_name: sb-topic-trainer
+        depends_on:
+            - service-registry
+            - db
+        environment:
+            - SPRING_PROFILES_ACTIVE=dev
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://sb-service-registry:8761/eureka/
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://sb-db:5432/sb_topic_trainer
+            - SPRING_DATASOURCE_USERNAME=spring
+            - SPRING_DATASOURCE_PASSWORD=boot
+    
+    subject-trainer:
+        image: viditpawar/study-buddy-subject-trainer:latest
+        container_name: sb-subject-trainer
+        depends_on:
+            - service-registry
+            - db
+            - localstack
+        environment:
+            - SPRING_PROFILES_ACTIVE=dev
+            - EUREKA_CLIENT_SERVICEURL_DEFAULTZONE=http://sb-service-registry:8761/eureka/
+            - SPRING_DATASOURCE_URL=jdbc:postgresql://sb-db:5432/sb_subject_trainer
+            - SPRING_DATASOURCE_USERNAME=spring
+            - SPRING_DATASOURCE_PASSWORD=boot
+            - SPRING_CLOUD_AWS_ENDPOINT=http://sb-localstack:4566
+        models:
+            llm:
+                endpoint_var: SPRING_AI_OPENAI_BASE_URL
+                model_var: SPRING_AI_OPENAI_CHAT_OPTIONS_MODEL
+
+volumes:
+    dbdata:
+    llm-data:
+
+models:
+    llm:
+        model: ai/gemma3
