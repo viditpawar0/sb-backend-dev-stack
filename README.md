@@ -1,13 +1,9 @@
 ### Study Buddy Backend API - Development stack build
 
-To run this project localy, follow these steps: -
+To run this project localy, run this inside the project destination folder's terminal
 
-1: Pull the repository:
 ~~~
+git init
 git pull https://github.com/viditpawar0/sb-backend-dev-stack.git
-~~~
-
-2: Run the app:
-~~~
 docker compose up
 ~~~
