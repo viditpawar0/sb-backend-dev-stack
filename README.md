@@ -27,3 +27,8 @@ Change the default configs like this:
 
 ---
 While the project is running, you can access the api gateway on port `8080` by default.
+To stop the application, run
+
+~~~
+docker compose down
+~~~
