@@ -21,7 +21,7 @@ docker compose -f oci://docker.io/viditpawar/sb-backend-dev-stack up
 
 Check the `.env` file for customizable configs and their defaults.
 
-Customize configs by editing environment variables.
+Customize configs by setting environment variables.
 
 While the project is running, you can access the api gateway on port `8080` by default.
 
