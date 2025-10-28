@@ -28,5 +28,5 @@ While the project is running, you can access the api gateway on port `8080` by d
 To stop the application, run
 
 ~~~
-docker compose down
+docker compose -f oci://docker.io/viditpawar/sb-backend-dev-stack down
 ~~~
