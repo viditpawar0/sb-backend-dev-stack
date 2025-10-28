@@ -1,6 +1,6 @@
 # Study Buddy Backend API - Development stack build
 
-### To run this project localy in dev mode, run this command in terminal:-
+### To run this application localy in dev mode, run this command in terminal:-
 
 ~~~
 docker compose -f oci://docker.io/viditpawar/sb-backend-dev-stack up
