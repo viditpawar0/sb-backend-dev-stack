@@ -1,4 +1,7 @@
 # Study Buddy Backend API - Development stack build
+This is a self-contained compose application orchestrating the whole back-end stack of the `Study Buddy` application in development mode which is meant for front-end integration purposes.
+
+---
 
 ### To run this application localy in dev mode, run this command in terminal:-
 
