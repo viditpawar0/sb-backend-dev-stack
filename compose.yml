@@ -7,17 +7,29 @@ services:
             POSTGRES_PASSWORD: boot
         volumes:
         - dbdata:/var/lib/postgresql/data
-        - ./init-db.sql:/docker-entrypoint-initdb.d/init-db.sql
         ports:
           - ${DB_PORT:-5433}:5432
+        command: >
+          bash -c "
+            docker-entrypoint.sh postgres &
+            sleep 5
+            psql -U spring -c 'CREATE DATABASE sb_subject_trainer;'
+            psql -U spring -c 'CREATE DATABASE sb_topic_trainer;'
+            wait
+          "
 
     localstack:
         image: localstack/localstack:latest
         container_name: sb-localstack
         environment:
             SERVICES: s3
-        volumes:
-            - ./init-localstack.sh:/etc/localstack/init/ready.d/10-init-localstack.sh
+        command: >
+          bash -c "
+            /usr/bin/localstack &
+            sleep 5
+            awslocal s3 mb s3://study-buddy || true
+            wait
+          "
     
     service-registry:
         image: viditpawar/study-buddy-service-registry:latest
@@ -48,8 +60,7 @@ services:
             - SPRING_DATASOURCE_URL=jdbc:postgresql://sb-db:5432/sb_topic_trainer
             - SPRING_DATASOURCE_USERNAME=spring
             - SPRING_DATASOURCE_PASSWORD=boot
-            - SPRING_CONFIG_IMPORT=optional:configserver:http://sb-config-server:8888/
-            - SPRING_CLOUD_CONFIG_FAILFAST=false
+            - SPRING_CLOUD_CONFIG_ENABLED=false
         models:
             llm:
                 endpoint_var: SPRING_AI_OPENAI_BASE_URL
@@ -69,6 +80,7 @@ services:
             - SPRING_DATASOURCE_USERNAME=spring
             - SPRING_DATASOURCE_PASSWORD=boot
             - SPRING_CLOUD_AWS_ENDPOINT=http://sb-localstack:4566
+            - SPRING_CLOUD_CONFIG_ENABLED=false
         models:
             llm:
                 endpoint_var: SPRING_AI_OPENAI_BASE_URL
