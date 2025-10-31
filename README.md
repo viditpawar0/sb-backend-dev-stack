@@ -3,16 +3,16 @@ This is a self-contained compose application orchestrating the whole back-end st
 
 ---
 
-### To run this application localy in dev mode, run this command in terminal:-
+### To run this application localy in dev mode, clone this repo and run this command in terminal from root:-
 
 ~~~
-docker compose -f oci://docker.io/viditpawar/sb-backend-dev-stack up
+docker compose up
 ~~~
 
-### To stop the application, run this command in ternimal:-
+### To stop the application, run this command in ternimal from root:-
 
 ~~~
-docker compose -f oci://docker.io/viditpawar/sb-backend-dev-stack down
+docker compose down
 ~~~
 
 ---
