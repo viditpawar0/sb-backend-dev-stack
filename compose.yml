@@ -11,10 +11,11 @@ services:
           - ${DB_PORT:-5433}:5432
         command: >
           bash -c "
+            docker-entrypoint.sh postgres &
             sleep 5
             psql -U spring -c 'CREATE DATABASE sb_subject_trainer;'
             psql -U spring -c 'CREATE DATABASE sb_topic_trainer;'
-            echo 'Databases created'
+            wait
           "
 
     localstack:
@@ -24,8 +25,10 @@ services:
             SERVICES: s3
         command: >
           bash -c "
-            awslocal s3 mb s3://study-buddy
-            echo 'S3 bucket created'
+            /usr/bin/localstack &
+            sleep 5
+            awslocal s3 mb s3://study-buddy || true
+            wait
           "
     
     service-registry:
